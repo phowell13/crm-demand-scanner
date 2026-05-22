@@ -6,7 +6,7 @@ from pytrends.request import TrendReq
 # GOOGLE TRENDS SETUP
 # =====================================================
 
-pytrends = TrendReq(hl='en-GB', tz=0)
+pytrends = TrendReq(hl="en-GB", tz=0)
 
 
 
