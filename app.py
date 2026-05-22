@@ -1,5 +1,15 @@
 import streamlit as st
 import pandas as pd
+from pytrends.request import TrendReq
+
+# =====================================================
+# GOOGLE TRENDS SETUP
+# =====================================================
+
+pytrends = TrendReq(hl='en-GB', tz=0)
+
+
+
 
 st.set_page_config(
     page_title="CRM Demand Scanner",
@@ -54,20 +64,52 @@ st.write(
     "For each keyword, add manual scores from 0 to 10. "
     "Later, these can be automated using APIs."
 )
+def get_google_trend_score(keyword):
 
-data = []
+    try:
 
-for keyword in keywords:
-    data.append({
-        "Keyword": keyword,
-        "Job_Post_Score": 0,
-        "Search_Trend_Score": 0,
-        "Community_Pain_Score": 0,
-        "Competitor_Score": 0,
-        "Notes": ""
-    })
+        pytrends.build_payload(
+            [keyword],
+            timeframe='today 12-m',
+            geo='GB'
+        )
 
-df = pd.DataFrame(data)
+        trend_data = pytrends.interest_over_time()
+
+        if trend_data.empty:
+            return 0
+
+        score = trend_data[keyword].mean()
+
+        return round(score, 2)
+
+    except Exception:
+        return 0
+# =====================================================
+# GOOGLE TRENDS FUNCTION
+# =====================================================
+
+def get_google_trend_score(keyword):
+
+    try:
+
+        pytrends.build_payload(
+            [keyword],
+            timeframe='today 12-m',
+            geo='GB'
+        )
+
+        trend_data = pytrends.interest_over_time()
+
+        if trend_data.empty:
+            return 0
+
+        score = trend_data[keyword].mean()
+
+        return round(score, 2)
+
+    except Exception:
+        return 0
 
 edited_df = st.data_editor(
     df,
